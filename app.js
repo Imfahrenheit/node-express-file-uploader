@@ -10,10 +10,11 @@ mongoose.Promise = global.Promise;
 
 mongoose.connect("mongodb://TM:123456@ds227740.mlab.com:27740/shop-rest-api");
 
-const productRoutes= require('./api/routes/products')
-const orderRoutes= require('./api/routes/orders')
+const uploadRoutes= require('./api/routes/uploads')
+
 
 app.use(morgan('dev'));
+app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
@@ -27,13 +28,13 @@ if(res.meathod==="OPTIONS"){
 };
 next()
 });
+// Our upload routes added here 
+app.use('/uploads', uploadRoutes);
 
-app.use('/products', productRoutes);
-app.use("/orders", orderRoutes);
 
 
 app.use((req, res, next)=>{
-const error= new Error('not found')
+const error= new Error('its all empty here')
 error.status= 404;
 next(error)
 });
