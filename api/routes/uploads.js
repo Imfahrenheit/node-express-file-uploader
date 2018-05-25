@@ -8,6 +8,13 @@ const path = require("path");
 const fs = require('fs')
 
 
+
+
+mongoose.connect("mongodb://TM:123456@ds227740.mlab.com:27740/shop-rest-api");
+
+
+
+
 // using multer to store files in a static folder
 
 const storage = multer.diskStorage({
@@ -49,12 +56,7 @@ router.get('/', (req, res, next) => {
     .then(docs => {
       if(docs.length>0){
       let response = { count: docs.length, uploads: docs.map(doc => {
-          return { 
-            name: doc.name, 
-            imageFile: doc.imageFile,
-            id: doc._id, 
-            request: 
-            { type: "GET", url: "http://localhost:5000/uploads/" + doc._id } };
+          return { name: doc.name, imageFile: doc.imageFile, id: doc._id };
         }) }
       res.status(200).json({ response });
       }
@@ -84,14 +86,12 @@ router.post('/', upload.single('file') ,(req, res, next) => {
         .status(201)
         .json({
           message: "new file upload is uploaded",
-          newUpload: { 
-            name:result.name,
-            id:result._id,
-            imagePath:result.imageFile,
-            request: {
-               type: "GET", 
-               url: "http://localhost:5000/uploads/" + result._id
-              } }
+          newUpload: {
+            name: result.name,
+            id: result._id,
+            imagePath: result.imageFile
+            
+          }
         });
      
     })
@@ -114,10 +114,7 @@ router.get("/:Id", (req, res, next) => {
           .status(200)
           .json({
             upload: doc,
-            request: {
-              type: "GET",
-              url: "http://localhost:5000/products/"
-            }
+            
           });
       } else {
         res.status(500).json({ message: "no file found for this id" });
